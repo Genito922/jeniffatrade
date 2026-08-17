@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — JENIFFA TRADE</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --gold: #C9A84C; --dark: #1A1A2E; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--dark) 0%, #0F3460 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .box {
+      background: white;
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%; max-width: 380px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+    .brand { font-size: 1.5rem; font-weight: 900; letter-spacing: 3px; color: var(--dark); }
+    .brand span { color: var(--gold); }
+    .sub { font-size: .75rem; color: #888; margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; }
+    h2 { margin: 28px 0 20px; font-size: 1rem; color: #444; font-weight: 600; }
+    input[type=password] {
+      width: 100%; padding: 14px 18px;
+      border: 2px solid #E8E8E8;
+      border-radius: 12px; font-size: .95rem;
+      outline: none; transition: border .2s;
+      text-align: center; letter-spacing: 4px;
+    }
+    input[type=password]:focus { border-color: var(--gold); }
+    button {
+      width: 100%; padding: 14px;
+      background: var(--dark); color: var(--gold);
+      border: none; border-radius: 12px;
+      font-size: .9rem; font-weight: 700;
+      cursor: pointer; margin-top: 14px;
+      letter-spacing: 1px; transition: opacity .2s;
+    }
+    button:hover { opacity: .85; }
+    .error { background: #FEE; border: 1px solid #FCC; border-radius: 10px;
+             color: #C00; padding: 10px; font-size: .82rem; margin-top: 14px; }
+    .back { display: block; margin-top: 20px; font-size: .8rem; color: #888;
+            text-decoration: none; }
+    .back:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="brand">JENIFFA <span>TRADE</span></div>
+  <div class="sub">Espace Administration</div>
+  <h2>Entrez le code d'accès</h2>
+  <form method="POST">
+    <input type="password" name="code" placeholder="••••••••••" autofocus required/>
+    <button type="submit">Accéder</button>
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+  </form>
+  <a href="/" class="back">← Retour au catalogue</a>
+</div>
+</body>
+</html>

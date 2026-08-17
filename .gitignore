@@ -1,0 +1,6 @@
+jenifa_venv/
+jenifa_catalogue.db
+__pycache__/
+*.pyc
+.env
+static/uploads/
