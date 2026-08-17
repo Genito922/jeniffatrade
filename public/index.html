@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catalogue — JENIFFA TRADE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1320;
+    --paper:#F7F4EE;
+    --paper-dim:#ECE7DB;
+    --kids-navy:#1E3A8A;
+    --kids-navy-deep:#122a63;
+    --kids-gold:#D4A24C;
+    --care-sky:#3FA9DB;
+    --care-mint:#2FBE9C;
+    --rose:#B5406B;
+    --amber:#C97A2B;
+    --line: rgba(15,19,32,0.12);
+    --danger:#B23A3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:600; margin:0; letter-spacing:-0.01em;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.12em; text-transform:uppercase; font-weight:500;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  :focus-visible{outline:2px solid var(--kids-gold); outline-offset:2px;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+
+  nav{position:sticky; top:0; z-index:40; background:rgba(247,244,238,0.94); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+  nav .row{display:flex; align-items:center; justify-content:space-between; height:64px; gap:16px;}
+  .brandmark{font-family:'Fraunces',serif; font-weight:700; font-size:17px;}
+  .brandmark span{color:var(--kids-navy);}
+  .btn{border:1px solid var(--ink); background:transparent; color:var(--ink); font-size:13px; font-weight:600; padding:10px 16px; transition:background .15s ease,color .15s ease;}
+  .btn:hover{background:var(--ink); color:var(--paper);}
+  .btn-primary{background:var(--ink); color:var(--paper);}
+  .btn-primary:hover{background:var(--kids-navy-deep);}
+  .btn:disabled{opacity:0.6; cursor:default;}
+
+  .cat-hero{padding:52px 0 36px;}
+  .cat-hero .eyebrow{color:var(--kids-navy);}
+  .cat-hero h1{font-size:clamp(28px,4vw,42px); margin-top:12px;}
+  .cat-hero p{margin-top:10px; color:#4a4d58; max-width:56ch; font-size:15px;}
+
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; padding:8px 0 32px; border-bottom:1px solid var(--line); margin-bottom:32px;}
+  .tab{border:1px solid var(--line); background:#fff; padding:8px 14px; font-size:13px; font-weight:600; color:#4a4d58;}
+  .tab.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  main{padding-bottom:100px;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:22px;}
+  .card{background:#fff; border:1px solid var(--line); display:flex; flex-direction:column;}
+  .card-img{aspect-ratio:1/1; background:var(--paper-dim); overflow:hidden; position:relative;}
+  .card-img img{width:100%; height:100%; object-fit:cover; display:block;}
+  .card-tag{position:absolute; top:10px; left:10px; font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; padding:4px 8px; color:#fff;}
+  .card-body{padding:16px 16px 18px; display:flex; flex-direction:column; gap:6px; flex:1;}
+  .card-body h3{font-size:15.5px; font-family:'Inter'; font-weight:700;}
+  .price{font-family:'IBM Plex Mono',monospace; font-size:14px;}
+  .video-link{font-size:12px; color:var(--care-sky); text-decoration:none; font-weight:600;}
+  .card-actions{margin-top:auto; display:flex; gap:8px; padding-top:10px;}
+  .order-btn{flex:1; text-align:center; background:#25D366; color:#0b2e17; font-weight:700; font-size:13px; padding:10px 8px; text-decoration:none; border:1px solid #1fb457;}
+  .icon-btn{border:1px solid var(--line); background:#fff; font-size:12px; padding:9px 11px; color:#4a4d58;}
+  .icon-btn:hover{background:var(--paper-dim);}
+
+  .state-box{border:1px dashed var(--line); padding:60px 24px; text-align:center; color:#6a6d78;}
+  .state-box h3{font-size:18px; margin-bottom:8px; color:var(--ink);}
+  .skeleton{background:linear-gradient(90deg,var(--paper-dim) 25%,#e2ddce 37%,var(--paper-dim) 63%); background-size:400% 100%; animation:shimmer 1.4s ease infinite;}
+  @keyframes shimmer{0%{background-position:100% 0;}100%{background-position:0 0;}}
+  .skel-card{height:280px; border:1px solid var(--line);}
+
+  .fab{position:fixed; right:24px; bottom:24px; z-index:45; background:var(--ink); color:var(--paper); border:none; width:56px; height:56px; border-radius:50%; font-size:26px; box-shadow:0 6px 18px rgba(15,19,32,0.3);}
+  .fab:hover{background:var(--kids-navy-deep);}
+
+  .overlay{position:fixed; inset:0; background:rgba(15,19,32,0.55); display:flex; align-items:center; justify-content:center; z-index:60; padding:20px;}
+  .modal{background:var(--paper); width:100%; max-width:420px; padding:28px 26px; max-height:90vh; overflow-y:auto; position:relative;}
+  .modal h2{font-size:20px; margin-bottom:6px;}
+  .modal .sub{font-size:13px; color:#6a6d78; margin-bottom:20px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12px; font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em; color:#4a4d58;}
+  .field input[type=text], .field input[type=number], .field input[type=url], .field select{
+    width:100%; border:1px solid var(--line); background:#fff; padding:11px 12px; font-size:14px; font-family:'Inter';
+  }
+  .field input[type=file]{width:100%; font-size:13px;}
+  .img-preview{width:100%; height:160px; object-fit:cover; margin-top:10px; display:none; border:1px solid var(--line);}
+  .modal-actions{display:flex; gap:10px; margin-top:22px;}
+  .modal-actions .btn{flex:1; text-align:center;}
+  .close-x{position:absolute; top:16px; right:18px; background:none; border:none; font-size:20px; color:#6a6d78;}
+  .error-text{color:var(--danger); font-size:12.5px; margin-top:6px; display:none;}
+
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(0); background:var(--ink); color:var(--paper); padding:12px 20px; font-size:13.5px; z-index:80; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
+  .toast.err{background:var(--danger);}
+
+  [hidden]{display:none !important;}
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap row">
+    <div class="brandmark">JENIFFA <span>TRADE</span></div>
+    <button class="btn" id="admin-toggle">Gérer le catalogue</button>
+  </div>
+</nav>
+
+<div class="cat-hero wrap">
+  <span class="eyebrow">Catalogue en ligne</span>
+  <h1>Nos articles</h1>
+  <p>Parcourez la collection, puis commandez directement sur WhatsApp. Le catalogue s'enrichit régulièrement.</p>
+</div>
+
+<div class="wrap"><div class="tabs" id="tabs"></div></div>
+
+<main class="wrap">
+  <div class="grid" id="grid">
+    <div class="skeleton skel-card"></div>
+    <div class="skeleton skel-card"></div>
+    <div class="skeleton skel-card"></div>
+    <div class="skeleton skel-card"></div>
+  </div>
+  <div class="state-box" id="empty-state" hidden>
+    <h3>Aucun article pour l'instant</h3>
+    <p>Ajoutez le premier avec le bouton "Gérer le catalogue" en haut, ou le bouton + en bas de l'écran.</p>
+  </div>
+</main>
+
+<button class="fab" id="fab-add" title="Ajouter un article" hidden>+</button>
+
+<div class="overlay" id="pin-overlay" hidden>
+  <div class="modal">
+    <button class="close-x" data-close="pin-overlay">✕</button>
+    <h2>Accès gestion</h2>
+    <p class="sub">Entrez le code partagé avec votre équipe pour ajouter ou modifier des articles.</p>
+    <div class="field">
+      <label for="pin-input">Code d'accès</label>
+      <input type="text" id="pin-input" placeholder="••••••">
+      <div class="error-text" id="pin-error">Code incorrect. Réessayez.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="pin-submit">Déverrouiller</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="product-overlay" hidden>
+  <div class="modal">
+    <button class="close-x" data-close="product-overlay">✕</button>
+    <h2 id="product-modal-title">Ajouter un article</h2>
+    <p class="sub">Renseignez les informations de l'article, il apparaît immédiatement sur le site.</p>
+    <form id="product-form">
+      <div class="field">
+        <label for="p-name">Nom de l'article</label>
+        <input type="text" id="p-name" required placeholder="Ex : Robe imprimée fleurs">
+      </div>
+      <div class="field">
+        <label for="p-price">Prix (FCFA)</label>
+        <input type="number" id="p-price" required min="0" placeholder="Ex : 12000">
+      </div>
+      <div class="field">
+        <label for="p-category">Catégorie</label>
+        <select id="p-category">
+          <option value="Kids & Beauté">Kids & Beauté</option>
+          <option value="Care">Care</option>
+          <option value="Mode Femme">Mode Femme</option>
+          <option value="__new__">+ Nouvelle catégorie…</option>
+        </select>
+        <input type="text" id="p-category-new" placeholder="Nom de la nouvelle catégorie" style="margin-top:8px;" hidden>
+      </div>
+      <div class="field">
+        <label for="p-photo">Photo</label>
+        <input type="file" id="p-photo" accept="image/*">
+        <img id="p-photo-preview" class="img-preview">
+        <div class="error-text" id="photo-error">Cette photo est trop lourde même après compression. Essayez une autre photo.</div>
+      </div>
+      <div class="field">
+        <label for="p-video">Lien vidéo (optionnel)</label>
+        <input type="url" id="p-video" placeholder="Lien TikTok, Instagram, YouTube…">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" data-close="product-overlay">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="product-submit">Publier l'article</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const WHATSAPP_NUMBER = "225074897812";
+
+  const ACCENTS = { "Kids & Beauté": "#1E3A8A", "Care": "#3FA9DB", "Mode Femme": "#B5406B" };
+  const FALLBACK_ACCENTS = ["#C97A2B","#2FBE9C","#D4A24C","#B5406B","#3FA9DB","#1E3A8A"];
+  function colorFor(cat){
+    if (ACCENTS[cat]) return ACCENTS[cat];
+    let h = 0; for (let i=0;i<cat.length;i++) h = (h*31 + cat.charCodeAt(i)) % FALLBACK_ACCENTS.length;
+    return FALLBACK_ACCENTS[h];
+  }
+
+  let isAdmin = false;
+  let adminPin = null; // gardé en mémoire le temps de la session, jamais sauvegardé
+  let products = [];
+  let activeTab = "Tous";
+
+  const grid = document.getElementById('grid');
+  const emptyState = document.getElementById('empty-state');
+  const tabsEl = document.getElementById('tabs');
+  const fab = document.getElementById('fab-add');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg, isErr){
+    toast.textContent = msg;
+    toast.classList.toggle('err', !!isErr);
+    toast.classList.add('show');
+    setTimeout(()=> toast.classList.remove('show'), 2600);
+  }
+  function openOverlay(id){ document.getElementById(id).hidden = false; }
+  function closeOverlay(id){ document.getElementById(id).hidden = true; }
+  document.querySelectorAll('[data-close]').forEach(el=>{
+    el.addEventListener('click', ()=> closeOverlay(el.dataset.close));
+  });
+
+  function lockAdmin(msg){
+    isAdmin = false; adminPin = null;
+    document.getElementById('admin-toggle').textContent = 'Gérer le catalogue';
+    fab.hidden = true;
+    render();
+    if (msg) showToast(msg, true);
+  }
+
+  /* ---------- API ---------- */
+  async function loadProducts(){
+    const res = await fetch('/api/products');
+    if (!res.ok) throw new Error('load failed');
+    return await res.json();
+  }
+
+  async function saveProduct(product){
+    const res = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Pin': adminPin || '' },
+      body: JSON.stringify(product)
+    });
+    if (res.status === 401){ lockAdmin('Session expirée, reconnectez-vous.'); throw new Error('unauthorized'); }
+    if (!res.ok) throw new Error('save failed');
+    return await res.json();
+  }
+
+  async function deleteProductKey(id){
+    const res = await fetch('/api/products/' + id, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Pin': adminPin || '' }
+    });
+    if (res.status === 401){ lockAdmin('Session expirée, reconnectez-vous.'); throw new Error('unauthorized'); }
+    if (!res.ok) throw new Error('delete failed');
+  }
+
+  /* ---------- Rendering ---------- */
+  function renderTabs(){
+    const cats = Array.from(new Set(products.map(p=>p.category)));
+    const all = ["Tous", ...cats];
+    tabsEl.innerHTML = "";
+    all.forEach(cat=>{
+      const b = document.createElement('button');
+      b.className = 'tab' + (cat === activeTab ? ' active' : '');
+      b.textContent = cat;
+      b.addEventListener('click', ()=>{ activeTab = cat; render(); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function waLink(name){
+    const text = encodeURIComponent('Bonjour, je suis intéressé par : ' + name);
+    return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + text;
+  }
+
+  function renderGrid(){
+    const filtered = activeTab === "Tous" ? products : products.filter(p=>p.category === activeTab);
+    grid.innerHTML = "";
+    if (filtered.length === 0){ emptyState.hidden = false; grid.hidden = true; return; }
+    emptyState.hidden = true; grid.hidden = false;
+    filtered.forEach(p=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-img">
+          <span class="card-tag" style="background:${colorFor(p.category)}">${p.category}</span>
+          <img src="${p.imageDataUrl}" alt="${p.name}">
+        </div>
+        <div class="card-body">
+          <h3>${p.name}</h3>
+          <div class="price">${Number(p.price).toLocaleString('fr-FR')} FCFA</div>
+          ${p.videoUrl ? `<a class="video-link" href="${p.videoUrl}" target="_blank" rel="noopener">▶ Voir la vidéo</a>` : ''}
+          <div class="card-actions">
+            <a class="order-btn" href="${waLink(p.name)}" target="_blank" rel="noopener">Commander sur WhatsApp</a>
+            ${isAdmin ? `<button class="icon-btn" data-edit="${p.id}">Modifier</button><button class="icon-btn" data-del="${p.id}">Suppr.</button>` : ''}
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+    grid.querySelectorAll('[data-edit]').forEach(btn=>{
+      btn.addEventListener('click', ()=> openProductForm(products.find(p=>p.id===btn.dataset.edit)));
+    });
+    grid.querySelectorAll('[data-del]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        if (!confirm('Supprimer cet article du catalogue ?')) return;
+        try{
+          await deleteProductKey(btn.dataset.del);
+          products = products.filter(p=>p.id !== btn.dataset.del);
+          render();
+          showToast('Article supprimé.');
+        }catch(e){ if (e.message !== 'unauthorized') showToast('Échec de la suppression, réessayez.', true); }
+      });
+    });
+  }
+
+  function render(){ renderTabs(); renderGrid(); }
+
+  /* ---------- Admin / PIN ---------- */
+  document.getElementById('admin-toggle').addEventListener('click', ()=>{
+    if (isAdmin){ lockAdmin(); }
+    else { openOverlay('pin-overlay'); }
+  });
+
+  document.getElementById('pin-submit').addEventListener('click', async ()=>{
+    const val = document.getElementById('pin-input').value.trim();
+    const btn = document.getElementById('pin-submit');
+    btn.disabled = true;
+    try{
+      const res = await fetch('/api/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: val })
+      });
+      if (res.ok){
+        isAdmin = true; adminPin = val;
+        document.getElementById('pin-error').style.display = 'none';
+        document.getElementById('pin-input').value = '';
+        closeOverlay('pin-overlay');
+        document.getElementById('admin-toggle').textContent = 'Quitter la gestion';
+        fab.hidden = false;
+        render();
+        showToast('Mode gestion activé.');
+      } else {
+        document.getElementById('pin-error').style.display = 'block';
+      }
+    }catch(e){
+      showToast('Connexion impossible, réessayez.', true);
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  fab.addEventListener('click', ()=> openProductForm(null));
+
+  /* ---------- Product form ---------- */
+  let editingId = null;
+  let pendingImageDataUrl = null;
+
+  function openProductForm(existing){
+    editingId = existing ? existing.id : null;
+    pendingImageDataUrl = existing ? existing.imageDataUrl : null;
+    document.getElementById('product-modal-title').textContent = existing ? "Modifier l'article" : "Ajouter un article";
+    document.getElementById('p-name').value = existing ? existing.name : '';
+    document.getElementById('p-price').value = existing ? existing.price : '';
+    document.getElementById('p-video').value = existing ? (existing.videoUrl || '') : '';
+    const catSelect = document.getElementById('p-category');
+    const knownCats = Array.from(catSelect.options).map(o=>o.value);
+    if (existing && !knownCats.includes(existing.category)){
+      const opt = document.createElement('option');
+      opt.value = existing.category; opt.textContent = existing.category;
+      catSelect.insertBefore(opt, catSelect.querySelector('[value="__new__"]'));
+    }
+    catSelect.value = existing ? existing.category : 'Kids & Beauté';
+    document.getElementById('p-category-new').hidden = true;
+    document.getElementById('p-category-new').value = '';
+    const preview = document.getElementById('p-photo-preview');
+    if (existing){ preview.src = existing.imageDataUrl; preview.style.display='block'; }
+    else { preview.style.display='none'; preview.src=''; }
+    document.getElementById('p-photo').value = '';
+    document.getElementById('photo-error').style.display = 'none';
+    openOverlay('product-overlay');
+  }
+
+  document.getElementById('p-category').addEventListener('change', (e)=>{
+    document.getElementById('p-category-new').hidden = e.target.value !== '__new__';
+  });
+
+  function compressImage(file, maxDim, quality){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        const img = new Image();
+        img.onload = ()=>{
+          let w = img.width, h = img.height;
+          if (w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+          else if (h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function compressWithFallback(file){
+    const attempts = [[1000,0.75],[800,0.65],[600,0.55],[420,0.45]];
+    for (const [dim,q] of attempts){
+      const dataUrl = await compressImage(file, dim, q);
+      if (dataUrl.length < 8 * 1024 * 1024) return dataUrl;
+    }
+    return null;
+  }
+
+  document.getElementById('p-photo').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('photo-error').style.display = 'none';
+    const dataUrl = await compressWithFallback(file);
+    if (!dataUrl){ document.getElementById('photo-error').style.display = 'block'; pendingImageDataUrl = null; return; }
+    pendingImageDataUrl = dataUrl;
+    const preview = document.getElementById('p-photo-preview');
+    preview.src = dataUrl; preview.style.display = 'block';
+  });
+
+  document.getElementById('product-form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('p-name').value.trim();
+    const price = document.getElementById('p-price').value;
+    let category = document.getElementById('p-category').value;
+    if (category === '__new__'){
+      category = document.getElementById('p-category-new').value.trim();
+      if (!category){ showToast('Donnez un nom à la nouvelle catégorie.', true); return; }
+    }
+    if (!pendingImageDataUrl){ showToast('Ajoutez une photo avant de publier.', true); return; }
+    const videoUrl = document.getElementById('p-video').value.trim();
+    const submitBtn = document.getElementById('product-submit');
+    submitBtn.disabled = true; submitBtn.textContent = 'Publication…';
+
+    const product = {
+      id: editingId || ('p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7)),
+      name, price, category, videoUrl,
+      imageDataUrl: pendingImageDataUrl,
+      createdAt: editingId ? (products.find(p=>p.id===editingId)?.createdAt || Date.now()) : Date.now()
+    };
+
+    try{
+      await saveProduct(product);
+      const idx = products.findIndex(p=>p.id === product.id);
+      if (idx >= 0) products[idx] = product; else products.unshift(product);
+      closeOverlay('product-overlay');
+      render();
+      showToast(editingId ? 'Article modifié.' : 'Article publié.');
+    }catch(err){
+      if (err.message !== 'unauthorized') showToast('Échec de la sauvegarde. Vérifiez la connexion et réessayez.', true);
+    }finally{
+      submitBtn.disabled = false; submitBtn.textContent = "Publier l'article";
+    }
+  });
+
+  /* ---------- Init ---------- */
+  (async function init(){
+    try{ products = await loadProducts(); }
+    catch(e){ products = []; showToast('Impossible de charger le catalogue pour le moment.', true); }
+    render();
+  })();
+})();
+</script>
+</body>
+</html>
