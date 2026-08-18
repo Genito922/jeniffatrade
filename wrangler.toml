@@ -6,4 +6,4 @@ pages_build_output_dir = "public"
 # remplace REPLACE_WITH_YOUR_KV_NAMESPACE_ID par son id réel.
 [[kv_namespaces]]
 binding = "CATALOGUE"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+id = "33044dae39a049e194bd8afc3f1945de"
