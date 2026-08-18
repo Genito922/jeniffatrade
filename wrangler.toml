@@ -1,9 +1,3 @@
 name = "jeniffatrade"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "public"
-
-# Après avoir créé le namespace KV "CATALOGUE" dans le tableau de bord Cloudflare,
-# remplace REPLACE_WITH_YOUR_KV_NAMESPACE_ID par son id réel.
-[[kv_namespaces]]
-binding = "CATALOGUE"
-id = "33044dae39a049e194bd8afc3f1945de"
