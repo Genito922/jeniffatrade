@@ -1,3 +1,7 @@
 name = "jeniffatrade"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "public"
+"kv_namespaces": [{
+                    "binding": "KV_BINDING",
+                    "id": "33044dae39a049e194bd8afc3f1945de"
+                 }]
