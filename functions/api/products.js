@@ -1,48 +1,47 @@
-// GET /api/products  -> liste tous les articles du catalogue
+// GET /api/products
 export async function onRequestGet(context) {
-  const { env } = context;
-  if (!env.CATALOGUE) {
-    return Response.json({ error: 'KV non lié', detail: 'Le binding CATALOGUE est manquant.' }, { status: 500 });
-  }
-  let list;
   try {
-    list = await env.CATALOGUE.list({ prefix: 'product:' });
-  } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
-  }
+    const { env } = context;
 
-  const products = [];
-  for (const key of list.keys) {
-    const value = await env.CATALOGUE.get(key.name);
-    if (value) {
-      try { products.push(JSON.parse(value)); } catch (e) { /* entrée corrompue, ignorée */ }
+    if (!env.CATALOGUE) {
+      return Response.json({ error: 'KV_NOT_BOUND', bindings: Object.keys(env) }, { status: 500 });
     }
-  }
-  products.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-  return Response.json(products);
+    const list = await env.CATALOGUE.list({ prefix: 'product:' });
+    const products = [];
+    for (const key of list.keys) {
+      const value = await env.CATALOGUE.get(key.name);
+      if (value) {
+        try { products.push(JSON.parse(value)); } catch (_) {}
+      }
+    }
+    products.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    return Response.json(products);
+
+  } catch (e) {
+    return Response.json({ error: e.message, type: e.constructor.name }, { status: 500 });
+  }
 }
 
-// POST /api/products  -> crée ou met à jour un article (protégé par le code d'accès)
+// POST /api/products
 export async function onRequestPost(context) {
-  const { request, env } = context;
+  try {
+    const { request, env } = context;
 
-  const pin = request.headers.get('X-Admin-Pin');
-  if (!env.ADMIN_PIN || pin !== env.ADMIN_PIN) {
-    return new Response(JSON.stringify({ error: 'Code incorrect.' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const pin = request.headers.get('X-Admin-Pin');
+    if (!env.ADMIN_PIN || pin !== env.ADMIN_PIN) {
+      return Response.json({ error: 'Code incorrect.' }, { status: 401 });
+    }
+
+    const product = await request.json();
+    if (!product || !product.id || !product.name) {
+      return Response.json({ error: 'Article invalide.' }, { status: 400 });
+    }
+
+    await env.CATALOGUE.put('product:' + product.id, JSON.stringify(product));
+    return Response.json({ ok: true, id: product.id });
+
+  } catch (e) {
+    return Response.json({ error: e.message, type: e.constructor.name }, { status: 500 });
   }
-
-  const product = await request.json();
-  if (!product || !product.id || !product.name) {
-    return new Response(JSON.stringify({ error: 'Article invalide.' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
-  await env.CATALOGUE.put('product:' + product.id, JSON.stringify(product));
-  return Response.json({ ok: true, id: product.id });
 }
