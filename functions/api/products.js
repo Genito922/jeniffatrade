@@ -1,7 +1,15 @@
 // GET /api/products  -> liste tous les articles du catalogue
 export async function onRequestGet(context) {
   const { env } = context;
-  const list = await env.CATALOGUE.list({ prefix: 'product:' });
+  if (!env.CATALOGUE) {
+    return Response.json({ error: 'KV non lié', detail: 'Le binding CATALOGUE est manquant.' }, { status: 500 });
+  }
+  let list;
+  try {
+    list = await env.CATALOGUE.list({ prefix: 'product:' });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500 });
+  }
 
   const products = [];
   for (const key of list.keys) {
