@@ -334,8 +334,8 @@
     return FALLBACK_TAGS[h];
   }
 
-  let isAdmin = false;
-  let adminPin = null;
+  let adminPin = sessionStorage.getItem('jt_pin') || null;
+  let isAdmin = !!adminPin;
   let products = [];
   let activeTab = "Tous";
 
@@ -360,6 +360,7 @@
 
   function lockAdmin(msg){
     isAdmin = false; adminPin = null;
+    sessionStorage.removeItem('jt_pin');
     document.getElementById('admin-toggle').textContent = 'Gérer le catalogue';
     fab.hidden = true;
     render();
@@ -476,6 +477,7 @@
       });
       if (res.ok){
         isAdmin = true; adminPin = val;
+        sessionStorage.setItem('jt_pin', val);
         document.getElementById('pin-error').style.display = 'none';
         document.getElementById('pin-input').value = '';
         closeOverlay('pin-overlay');
@@ -603,6 +605,11 @@
 
   /* ---------- Init ---------- */
   (async function init(){
+    // Restaure l'état admin si le PIN est en session
+    if (isAdmin){
+      document.getElementById('admin-toggle').textContent = 'Quitter la gestion';
+      fab.hidden = false;
+    }
     try{ products = await loadProducts(); }
     catch(e){ products = []; showToast('Impossible de charger le catalogue pour le moment.', true); }
     render();
