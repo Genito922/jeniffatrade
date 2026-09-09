@@ -328,8 +328,8 @@
         <input type="file" id="p-video-file" accept="video/*">
         <video id="p-video-preview" class="video-preview" controls playsinline></video>
         <button type="button" class="video-remove-btn" id="p-video-remove">✕ Supprimer la vidéo</button>
-        <div class="error-text" id="video-error">Vidéo trop lourde (max 50 Mo). Compressez-la ou utilisez un lien externe.</div>
-        <div class="field-note">Max 50 Mo — courtes séquences de présentation recommandées.</div>
+        <div class="error-text" id="video-error">Vidéo trop lourde (max 200 Mo). Utilisez un lien externe à la place.</div>
+        <div class="field-note">Max 200 Mo — la vidéo est stockée sur Cloudflare R2.</div>
       </div>
       <div class="field">
         <label for="p-video">Ou lien vidéo externe (TikTok, YouTube…)</label>
@@ -509,11 +509,14 @@
       const card = document.createElement('div');
       card.className = 'card';
 
-      // Vidéo embarquée (data URL) ou lien externe
-      const videoBlock = p.videoDataUrl
-        ? `<div class="card-video"><video src="${p.videoDataUrl}" controls playsinline preload="metadata"></video></div>`
+      // Vidéo R2 (clé) ou base64 (anciens produits) ou lien externe
+      const videoSrc = p.videoR2Key
+        ? `/api/video/${p.videoR2Key}`
+        : (p.videoDataUrl || null);
+      const videoBlock = videoSrc
+        ? `<div class="card-video"><video src="${videoSrc}" controls playsinline preload="metadata"></video></div>`
         : '';
-      const videoLink = (!p.videoDataUrl && p.videoUrl)
+      const videoLink = (!videoSrc && p.videoUrl)
         ? `<a class="video-link" href="${p.videoUrl}" target="_blank" rel="noopener">▶ Voir la vidéo</a>`
         : '';
 
@@ -679,12 +682,13 @@
   /* ---------- Product form ---------- */
   let editingId = null;
   let pendingImageDataUrl = null;
-  let pendingVideoDataUrl = null;
+  let pendingVideoKey = null;   // clé R2 de la vidéo uploadée
+  let videoUploading = false;
 
   function openProductForm(existing){
     editingId = existing ? existing.id : null;
     pendingImageDataUrl = existing ? existing.imageDataUrl : null;
-    pendingVideoDataUrl = existing ? (existing.videoDataUrl || null) : null;
+    pendingVideoKey = existing ? (existing.videoR2Key || null) : null;
     document.getElementById('product-modal-title').textContent = existing ? "Modifier l'article" : "Ajouter un article";
     document.getElementById('p-name').value = existing ? existing.name : '';
     document.getElementById('p-price').value = existing ? existing.price : '';
@@ -711,8 +715,8 @@
     // Vidéo preview
     const vPreview = document.getElementById('p-video-preview');
     const vRemoveBtn = document.getElementById('p-video-remove');
-    if (existing && existing.videoDataUrl){
-      vPreview.src = existing.videoDataUrl;
+    if (existing && existing.videoR2Key){
+      vPreview.src = '/api/video/' + existing.videoR2Key;
       vPreview.style.display = 'block';
       vRemoveBtn.style.display = 'block';
     } else {
@@ -771,36 +775,59 @@
     preview.src = dataUrl; preview.style.display = 'block';
   });
 
-  // Gestion upload vidéo
-  document.getElementById('p-video-file').addEventListener('change', (e)=>{
+  // Gestion upload vidéo → R2
+  document.getElementById('p-video-file').addEventListener('change', async (e)=>{
     const file = e.target.files[0];
     const errEl = document.getElementById('video-error');
     const vPreview = document.getElementById('p-video-preview');
     const vRemoveBtn = document.getElementById('p-video-remove');
+    const submitBtn = document.getElementById('product-submit');
     errEl.style.display = 'none';
 
-    if (!file){ return; }
+    if (!file) return;
 
-    // Limite 50 Mo
-    if (file.size > 50 * 1024 * 1024){
+    // Limite côté client : 200 Mo
+    if (file.size > 200 * 1024 * 1024){
       errEl.style.display = 'block';
       e.target.value = '';
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (ev)=>{
-      pendingVideoDataUrl = ev.target.result;
-      vPreview.src = pendingVideoDataUrl;
+    // Upload vers R2
+    videoUploading = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Upload vidéo…';
+
+    try {
+      const res = await fetch('/api/upload-video', {
+        method: 'POST',
+        headers: {
+          'Content-Type': file.type || 'video/mp4',
+          'X-Admin-Pin': adminPin || ''
+        },
+        body: file
+      });
+
+      if (res.status === 401){ lockAdmin('Session expirée, reconnectez-vous.'); return; }
+      if (!res.ok){ showToast('Échec de l\'upload vidéo. Réessayez.', true); return; }
+
+      const data = await res.json();
+      pendingVideoKey = data.key;
+      vPreview.src = '/api/video/' + pendingVideoKey;
       vPreview.style.display = 'block';
       vRemoveBtn.style.display = 'block';
-    };
-    reader.onerror = ()=>{ showToast('Impossible de lire la vidéo.', true); };
-    reader.readAsDataURL(file);
+      showToast('Vidéo uploadée.');
+    } catch(err) {
+      showToast('Erreur lors de l\'upload vidéo.', true);
+    } finally {
+      videoUploading = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Publier l'article";
+    }
   });
 
   document.getElementById('p-video-remove').addEventListener('click', ()=>{
-    pendingVideoDataUrl = null;
+    pendingVideoKey = null;
     const vPreview = document.getElementById('p-video-preview');
     vPreview.src = ''; vPreview.style.display = 'none';
     document.getElementById('p-video-file').value = '';
@@ -825,7 +852,7 @@
       id: editingId || ('p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7)),
       name, price, category, videoUrl,
       imageDataUrl: pendingImageDataUrl,
-      videoDataUrl: pendingVideoDataUrl || null,
+      videoR2Key: pendingVideoKey || null,
       createdAt: editingId ? (products.find(p=>p.id===editingId)?.createdAt || Date.now()) : Date.now()
     };
 
