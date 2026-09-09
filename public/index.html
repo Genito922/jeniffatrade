@@ -328,8 +328,8 @@
         <input type="file" id="p-video-file" accept="video/*">
         <video id="p-video-preview" class="video-preview" controls playsinline></video>
         <button type="button" class="video-remove-btn" id="p-video-remove">✕ Supprimer la vidéo</button>
-        <div class="error-text" id="video-error">Vidéo trop lourde (max 10 Mo). Compressez-la ou utilisez un lien externe.</div>
-        <div class="field-note">Max 10 Mo — courtes séquences de présentation recommandées.</div>
+        <div class="error-text" id="video-error">Vidéo trop lourde (max 50 Mo). Compressez-la ou utilisez un lien externe.</div>
+        <div class="field-note">Max 50 Mo — courtes séquences de présentation recommandées.</div>
       </div>
       <div class="field">
         <label for="p-video">Ou lien vidéo externe (TikTok, YouTube…)</label>
@@ -781,8 +781,8 @@
 
     if (!file){ return; }
 
-    // Limite 10 Mo
-    if (file.size > 10 * 1024 * 1024){
+    // Limite 50 Mo
+    if (file.size > 50 * 1024 * 1024){
       errEl.style.display = 'block';
       e.target.value = '';
       return;
