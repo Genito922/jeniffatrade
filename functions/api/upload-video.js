@@ -1,3 +1,13 @@
+// GET /api/upload-video — diagnostic (vérifie que le endpoint est accessible)
+export async function onRequestGet(context) {
+  const { env } = context;
+  return Response.json({
+    ok: true,
+    r2_bound: !!env.VIDEOS,
+    admin_pin_set: !!env.ADMIN_PIN
+  });
+}
+
 // POST /api/upload-video — upload d'une vidéo vers R2 (protégé par PIN)
 export async function onRequestPost(context) {
   const { request, env } = context;

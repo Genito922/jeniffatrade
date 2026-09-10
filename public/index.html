@@ -777,6 +777,7 @@
 
   // Gestion upload vidéo → R2
   document.getElementById('p-video-file').addEventListener('change', async (e)=>{
+    console.log('[vidéo] Fichier sélectionné');
     const file = e.target.files[0];
     const errEl = document.getElementById('video-error');
     const vPreview = document.getElementById('p-video-preview');
@@ -784,7 +785,8 @@
     const submitBtn = document.getElementById('product-submit');
     errEl.style.display = 'none';
 
-    if (!file) return;
+    if (!file){ console.log('[vidéo] Aucun fichier'); return; }
+    console.log('[vidéo] Nom:', file.name, '| Taille:', (file.size/1024/1024).toFixed(2), 'Mo | Type:', file.type);
 
     // Limite côté client : 200 Mo
     if (file.size > 200 * 1024 * 1024){
@@ -796,9 +798,11 @@
     // Upload vers R2
     videoUploading = true;
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Upload vidéo…';
+    submitBtn.textContent = 'Upload en cours…';
+    showToast('Upload de la vidéo en cours…');
 
     try {
+      console.log('[vidéo] Envoi vers /api/upload-video...');
       const res = await fetch('/api/upload-video', {
         method: 'POST',
         headers: {
@@ -808,17 +812,25 @@
         body: file
       });
 
+      console.log('[vidéo] Réponse HTTP:', res.status);
       if (res.status === 401){ lockAdmin('Session expirée, reconnectez-vous.'); return; }
-      if (!res.ok){ showToast('Échec de l\'upload vidéo. Réessayez.', true); return; }
 
       const data = await res.json();
+      console.log('[vidéo] Réponse JSON:', JSON.stringify(data));
+
+      if (!res.ok){
+        showToast('Erreur upload : ' + (data.error || res.status), true);
+        return;
+      }
+
       pendingVideoKey = data.key;
       vPreview.src = '/api/video/' + pendingVideoKey;
       vPreview.style.display = 'block';
       vRemoveBtn.style.display = 'block';
-      showToast('Vidéo uploadée.');
+      showToast('Vidéo uploadée avec succès !');
     } catch(err) {
-      showToast('Erreur lors de l\'upload vidéo.', true);
+      console.error('[vidéo] Erreur fetch:', err);
+      showToast('Erreur réseau lors de l\'upload. Vérifiez votre connexion.', true);
     } finally {
       videoUploading = false;
       submitBtn.disabled = false;
