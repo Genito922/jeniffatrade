@@ -45,6 +45,14 @@
     text-align:center;
   }
   .hero-top{display:flex; justify-content:flex-end; padding-bottom:8px;}
+  .hero-logo-wrap{display:flex; justify-content:center; margin-bottom:10px;}
+  .hero-logo{
+    width:110px; height:110px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid rgba(232,154,56,0.55);
+    box-shadow:0 0 0 6px rgba(200,124,32,0.15), 0 8px 32px rgba(0,0,0,0.35);
+  }
   .btn{
     border:1px solid rgba(255,255,255,0.3); background:transparent; color:#fff;
     font-size:12.5px; font-weight:600; padding:9px 15px; border-radius:999px;
@@ -107,9 +115,9 @@
     transition:transform .18s ease, box-shadow .18s ease;
   }
   .card:hover{transform:translateY(-3px); box-shadow:0 4px 12px rgba(28,14,6,0.1), 0 16px 40px rgba(28,14,6,0.09);}
-  .card-img{aspect-ratio:1/1; background:var(--paper-dim); overflow:hidden; position:relative;}
-  .card-img img{width:100%; height:100%; object-fit:cover; display:block; cursor:zoom-in; transition:transform .25s ease;}
-  .card-img img:hover{transform:scale(1.05);}
+  .card-img{aspect-ratio:4/5; background:#fff; overflow:hidden; position:relative;}
+  .card-img img{width:100%; height:100%; object-fit:contain; display:block; cursor:zoom-in; transition:transform .22s ease;}
+  .card-img img:hover{transform:scale(1.03);}
   .card-img .zoom-hint{
     position:absolute; bottom:8px; right:8px;
     background:rgba(24,14,6,0.5); backdrop-filter:blur(4px);
@@ -291,6 +299,9 @@
   <div class="wrap hero-top">
     <!-- bouton admin retiré du hero -->
     <div style="height:36px;"></div>
+  </div>
+  <div class="hero-logo-wrap">
+    <img class="hero-logo" src="/logo_jenifa.jpeg" alt="Jeniffa Trade Logo">
   </div>
   <h1>Jeniffa Trade</h1>
   <div class="tagline">Mode &amp; Beauté — Côte d'Ivoire</div>
