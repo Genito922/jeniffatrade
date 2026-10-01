@@ -521,7 +521,8 @@ src="https://www.facebook.com/tr?id=1096957163052914&ev=PageView&noscript=1"
 <script>
 (function(){
   const WHATSAPP_NUMBER = "2250788587840";
-    // Correspondance nom du site → ID du catalogue Meta
+
+  // Correspondance nom du site -> ID du catalogue Meta
   const CATALOG_IDS = {
     "sac tftf marron bleu en cuir": ["JT01"],
     "sac en cuir marron h": ["JT02"],
@@ -537,14 +538,15 @@ src="https://www.facebook.com/tr?id=1096957163052914&ev=PageView&noscript=1"
     "cullote en tissu multicolore": ["JT13"],
     "robe en soie": ["JT14"]
   };
+  function normName(n){ return String(n||'').toLowerCase().trim().replace(/\s+/g,' '); }
   function catalogId(p){
-    const key = String(p.name||'').toLowerCase().trim().replace(/\s+/g,' ');
+    const key = normName(p.name);
     const ids = CATALOG_IDS[key];
     if(!ids) return null;
-    const same = products.filter(x=>String(x.name||'').toLowerCase().trim().replace(/\s+/g,' ')===key);
+    const same = products.filter(x=>normName(x.name)===key);
     const i = same.indexOf(p);
     return ids[i>=0 && i<ids.length ? i : 0];
-  };
+  }
   const SOCIAL_LINKS = {
     whatsapp: "https://wa.me/2250788587840",
     instagram: "https://instagram.com/jeniffatrade",
@@ -731,7 +733,14 @@ src="https://www.facebook.com/tr?id=1096957163052914&ev=PageView&noscript=1"
     if(!p) return;
 
     // Meta Pixel : vue d'un produit
-    if(window.fbq) fbq('track', 'ViewContent', {content_name: p.name, value: Number(p.price), currency: 'XOF'});
+    const cid = catalogId(p);
+    if(window.fbq && cid) fbq('track', 'ViewContent', {
+      content_ids: [cid],
+      content_type: 'product',
+      content_name: p.name,
+      value: Number(p.price),
+      currency: 'XOF'
+    });
 
     const s = tagStyle(p.category);
     document.getElementById('details-img').src = p.imageDataUrl;
